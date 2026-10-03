@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Air Whiteboard</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- MediaPipe -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+</head>
+
+<body>
+
+    <div class="app">
+
+        <header>
+            <div>
+                <h1>✋ Air Whiteboard</h1>
+                <p>Write in the air using your finger</p>
+            </div>
+
+            <div class="status">
+                <span id="statusDot"></span>
+                <span id="statusText">Starting Camera...</span>
+            </div>
+        </header>
+
+            
+
+        <main>
+
+            <div class="camera-container">
+
+                <!-- Live Camera -->
+                <video id="video" autoplay playsinline></video>
+
+                <!-- Drawing Layer -->
+                <canvas id="drawCanvas"></canvas>
+
+                <!-- Hand Position -->
+                <div id="cursor"></div>
+
+                <div class="instruction">
+                    ☝️ Raise your index finger and move it to write
+                </div>
+
+            </div>
+
+            <div class="controls">
+
+                <div class="control-group">
+                    <label>Pen Color</label>
+
+                    <div class="colors">
+                        <button class="color active"
+                                data-color="#00ffcc"
+                                style="background:#00ffcc"></button>
+
+                        <button class="color"
+                                data-color="#ff3b81"
+                                style="background:#ff3b81"></button>
+
+                        <button class="color"
+                                data-color="#ffff00"
+                                style="background:#ffff00"></button>
+
+                        <button class="color"
+                                data-color="#ffffff"
+                                style="background:#ffffff"></button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        Pen Size:
+                        <span id="sizeValue">6</span>
+                    </label>
+
+                    <input
+                        type="range"
+                        id="penSize"
+                        min="2"
+                        max="20"
+                        value="6"
+                    >
+                </div>
+
+                <button id="clearBtn" class="control-btn">
+                    🧹 Clear
+                </button>
+
+                <button id="undoBtn" class="control-btn">
+                    ↩ Undo
+                </button>
+
+                <button id="fullscreenBtn" class="control-btn">
+                    ⛶ Fullscreen
+                </button>
+
+            </div>
+
+        </main>
+
+        <footer>
+            <span>🟢 Camera Active</span>
+            <span>•</span>
+            <span>Index Finger = Pen</span>
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
