@@ -16,16 +16,6 @@ Air-WhiteBoard is a browser-based virtual whiteboard project designed to make di
 
 ---
 
-## 📸 Preview
-
-> Add a real screenshot of your application here after uploading it to the repository.
-
-\<!-- Replace the path below with your actual screenshot file. -->
-
-\<!-- ![Air-WhiteBoard Preview]\(assets/air-whiteboard-preview\.png) -->
-
----
-
 ## ✨ Project Goals
 
 - 🖐️ **Gesture-Based Interaction** — Explore drawing through hand movements using a webcam.
