@@ -1,7 +1,7 @@
 # ✋ Air-WhiteBoard — Gesture-Based Virtual Whiteboard
 
 **Turn your hand movements into digital drawings.**
-
+ 
 Air-WhiteBoard is a browser-based virtual whiteboard project designed to make digital drawing more interactive using webcam-based hand gestures. The goal is to provide a touch-free drawing experience through a simple, accessible web interface.
 
 \<p align="center">
