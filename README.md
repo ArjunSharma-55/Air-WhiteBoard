@@ -1,54 +1,135 @@
 # ✋ Air-WhiteBoard — Gesture-Based Virtual Whiteboard
 
-**Turn your hand movements into digital drawings.**
- 
-Air-WhiteBoard is a browser-based virtual whiteboard project designed to make digital drawing more interactive using webcam-based hand gestures. The goal is to provide a touch-free drawing experience through a simple, accessible web interface.
+<div align="center">
 
-\<p align="center">
-&#x20; \<a href="[https://air-whiteboard.vercel.app/](https://air-whiteboard.vercel.app/)">
-&#x20;   \<strong>🚀 Live Demo\</strong>
-&#x20; \</a>
-&#x20; &nbsp; • &nbsp;
-&#x20; \<a href="[https://github.com/ArjunSharma-55/Air-WhiteBoard](https://github.com/ArjunSharma-55/Air-WhiteBoard)">
-&#x20;   \<strong>📂 Source Code\</strong>
-&#x20; \</a>
-\</p>
+![Project Banner](https://img.shields.io/badge/AIR--WHITEBOARD-GESTURE%20DRAWING-00D9FF?style=for-the-badge&labelColor=080B18)
+
+### Turn Your Hand Movements into Digital Drawings
+
+A browser-based virtual whiteboard project exploring touch-free drawing through webcam-based hand gestures and an interactive digital canvas.
+
+[![🌐 Live Demo](https://img.shields.io/badge/🌐_OPEN_LIVE_DEMO-00D9FF?style=for-the-badge&labelColor=080B18)](https://arjunsharma-55.github.io/Air-WhiteBoard/)
+
+[![📂 Source Code](https://img.shields.io/badge/📂_SOURCE_CODE-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ArjunSharma-55/Air-WhiteBoard)
+
+[![HTML5](https://img.shields.io/badge/HTML5-Structure-E34F26?style=flat-square&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-Design-1572B6?style=flat-square&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![JavaScript](https://img.shields.io/badge/JavaScript-Interaction-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+
+</div>
 
 ---
 
-## ✨ Project Goals
+## 📑 Table of Contents
 
-- 🖐️ **Gesture-Based Interaction** — Explore drawing through hand movements using a webcam.
-- 🎨 **Digital Drawing** — Provide an interactive space for creating drawings.
-- 🌐 **Browser-Based Experience** — Access the application through a supported web browser.
-- 📱 **Responsive Interface** — Aim for usability across desktop, tablet, and mobile screens.
-- ⚡ **Real-Time Interaction** — Keep drawing interactions responsive.
-- 🧩 **Simple Web Technologies** — Build the project using HTML, CSS, and JavaScript.
+- [About the Project](#-about-the-project)
+- [Live Demo](#-live-demo)
+- [Project Highlights](#-project-highlights)
+- [Technology Stack](#-technology-stack)
+- [Getting Started](#-getting-started)
+- [How to Use](#-how-to-use)
+- [Project Structure](#-project-structure)
+- [Architecture](#-architecture)
+- [Privacy and Permissions](#-privacy-and-permissions)
+- [Testing](#-testing)
+- [Future Improvements](#-future-improvements)
+- [Contributing](#-contributing)
+- [Author](#-author)
+- [License](#-license)
 
-*The available controls and gesture capabilities depend on the features implemented in the current source code.*
+## 🎨 About the Project
 
-## 🛠️ Tech Stack
+**Air-WhiteBoard** is a gesture-based virtual whiteboard project designed to make digital drawing more interactive.
 
-| Technology            | Purpose                                           |
-| --------------------- | ------------------------------------------------- |
-| HTML5                 | Web page structure                                |
-| CSS3                  | Styling, layout, and responsive design            |
-| JavaScript            | Application logic and user interactions           |
-| Webcam APIs           | Camera access, where implemented                  |
-| Hand-tracking library | Gesture recognition, if configured in the project |
-| Vercel                | Live website hosting                              |
+The project explores how webcam input and hand-tracking techniques can create a touch-free drawing experience through a browser interface.
+
+### 🎯 Project Goals
+
+- 🖐️ Explore hand-gesture interaction.
+- 🎨 Provide a digital drawing canvas.
+- 🌐 Make the experience accessible through a web browser.
+- ⚡ Practice interactive frontend development.
+- 🧩 Explore the possibilities of webcam-based interfaces.
+
+*Available gestures and drawing controls depend on the functionality implemented in the current version.*
+
+## 🌐 Live Demo
+
+Try the deployed project directly in your browser.
+
+<div align="center">
+
+[![Launch Air-WhiteBoard](https://img.shields.io/badge/🚀_LAUNCH_AIR--WHITEBOARD-OPEN_WEBSITE-00D9FF?style=for-the-badge&labelColor=080B18)](https://arjunsharma-55.github.io/Air-WhiteBoard/)
+
+**Live Website:**  
+https://arjunsharma-55.github.io/Air-WhiteBoard/
+
+**GitHub Repository:**  
+https://github.com/ArjunSharma-55/Air-WhiteBoard
+
+</div>
+
+If the application requests camera permission, allow access only if you want to use its webcam-based features and trust the website.
+
+## ✨ Project Highlights
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### ✋ Gesture Interaction
+
+Explore touch-free drawing using supported hand movements.
+
+</td>
+<td width="50%" valign="top">
+
+### 🎨 Digital Canvas
+
+A virtual space for creating drawings through the application interface.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### 📷 Webcam Input
+
+Camera-based interaction where supported by the implementation.
+
+</td>
+<td width="50%" valign="top">
+
+### 💻 Browser-Based
+
+A web project built around familiar frontend technologies.
+
+</td>
+</tr>
+</table>
+
+## 🛠️ Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| HTML5 | Page structure |
+| CSS3 | Styling and layout |
+| JavaScript | Application logic and interaction |
+| Browser Camera APIs | Webcam access, if implemented |
+| Hand-Tracking Library | Gesture recognition, if configured |
+| GitHub Pages | Live website hosting |
 
 ## 🚀 Getting Started
 
-### Option 1: Use the Live Demo
+### Option 1 — Open the Live Demo
 
-Open the deployed application:
+Visit:
 
-**[https://air-whiteboard.vercel.app/](https://air-whiteboard.vercel.app/)**
+**[Launch Air-WhiteBoard →](https://arjunsharma-55.github.io/Air-WhiteBoard/)**
 
-If the application requests camera access, allow permission to use the webcam for its gesture-based functionality.
+Use a supported browser and grant camera permission if required for the gesture-based functionality.
 
-### Option 2: Run Locally
+### Option 2 — Run Locally
 
 **1. Clone the repository**
 
@@ -56,135 +137,137 @@ If the application requests camera access, allow permission to use the webcam fo
 git clone https://github.com/ArjunSharma-55/Air-WhiteBoard.git
 ```
 
-**2. Open the project folder**
+**2. Enter the project folder**
 
 ```bash
 cd Air-WhiteBoard
 ```
 
-**3. Run the application**
+**3. Open the project**
 
-Open `index.html` in a browser, or use the **Live Server** extension in Visual Studio Code.
+Open `index.html` in your browser, or open the folder in Visual Studio Code and run it using the Live Server extension.
 
-For webcam features, use `localhost` through a local development server or the deployed HTTPS website. Browser camera permissions may not work when opening files directly using a `file://` URL.
+For webcam access, use a secure HTTPS website or `localhost`. Camera permissions may not work when opening a page directly through a `file://` URL.
 
 ## 🖐️ How to Use
 
-1. Open the website in a supported browser.
-2. Grant camera permission if prompted.
-3. Position your hand within the webcam frame.
-4. Follow the application's on-screen instructions for supported gestures.
-5. Use the available drawing tools and controls.
-6. Test the clear or reset option if it is available.
+1. Open the live website.
+2. Allow camera permission if the application requests it.
+3. Position your hand inside the camera frame.
+4. Follow the on-screen instructions for supported gestures.
+5. Use the drawing interface and available controls.
+6. Try any available clear or reset option.
 
-> Refer to the actual application interface for the supported gestures and controls.
+*Exact controls and gestures depend on the current application version.*
 
-## 🔐 Privacy
-
-- Camera access requires browser permission.
-- Only grant camera access to websites you trust.
-- Review the source code to understand how camera frames and hand-tracking data are processed.
-- Do not assume that camera processing is entirely local until the implementation has been verified.
-
-## 🧱 Project Structure
+## 📂 Project Structure
 
 ```text
 Air-WhiteBoard/
-├── index.html    # Main application page
-├── style.css     # Styles and responsive layout
-├── script.js     # Application logic
-└── README.md     # Project documentation
+├── index.html
+├── style.css
+├── script.js
+└── README.md
 ```
 
-## 🏗️ Architecture
+This is a typical structure for the project. Update the tree if your repository contains additional files or different filenames.
+
+## 🧠 Architecture
+
+The following diagram illustrates a conceptual gesture-drawing workflow.
 
 ```mermaid
 flowchart TD
-    A[User opens website] --> B[Browser interface]
-    B --> C[Camera permission]
-    C --> D[Webcam input]
-    D --> E[Gesture processing]
-    E --> F[Drawing interaction]
-    F --> G[Whiteboard display]
+    A[Open Website] --> B[Browser Interface]
+    B --> C[Camera Permission]
+    C --> D[Webcam Input]
+    D --> E[Hand Tracking]
+    E --> F[Gesture Processing]
+    F --> G[Drawing Canvas]
 ```
 
-*This is a conceptual architecture. Adjust the diagram to match the actual implementation and libraries used.*
+*The actual flow depends on the camera and hand-tracking libraries used in the implementation.*
+
+## 🔐 Privacy and Permissions
+
+- Camera access requires browser permission.
+- Grant camera access only to websites you trust.
+- Review the source code to understand how camera frames are processed.
+- Do not assume that all camera processing happens locally without verifying the implementation.
+- Stop the camera feature when you no longer need it, if the application provides a control.
 
 ## 🧪 Testing Checklist
 
+Use this checklist when testing the current version:
+
 - [ ] Website loads without JavaScript errors.
-- [ ] Webcam permission can be granted.
-- [ ] Camera-denied state is handled clearly.
+- [ ] Camera permission is requested when needed.
+- [ ] Camera-denied scenarios are handled clearly.
 - [ ] Hand detection works under suitable lighting, if implemented.
-- [ ] Drawing responds correctly to supported gestures.
+- [ ] Drawing responds to supported gestures.
 - [ ] Available drawing controls work correctly.
-- [ ] Clear or reset functionality works, if implemented.
-- [ ] Layout works on desktop and mobile screens.
-- [ ] Website works on the deployed HTTPS version.
-- [ ] No unnecessary camera stream remains active after stopping the feature.
-
-## 🐛 Troubleshooting
-
-### Camera is not working
-
-- Check browser camera permissions.
-- Close other applications that may be using the webcam.
-- Use a supported, up-to-date browser.
-- Run the website through HTTPS or `localhost`.
-- Reload the page after changing permissions.
-
-### Hand gestures are not detected
-
-- Improve lighting in the room.
-- Keep your hand inside the camera frame.
-- Avoid backgrounds that make your hand difficult to distinguish.
-- Check the browser console for errors related to the camera or gesture-detection library.
-
-### Website is slow
-
-- Close unnecessary browser tabs.
-- Check whether video processing is consuming too many resources.
-- Profile the application before reporting performance figures.
-- Test on multiple devices before claiming a specific FPS or latency.
+- [ ] Clear or reset works, if implemented.
+- [ ] Layout works on desktop and mobile.
+- [ ] Deployed HTTPS version works as expected.
+- [ ] Camera resources are released when the feature stops.
 
 ## 🔮 Future Improvements
 
-Potential improvements, depending on project scope:
+Potential improvements for future releases:
 
-- [ ] Multiple brush colors and adjustable brush sizes
+- [ ] Multiple brush colors and adjustable sizes
 - [ ] Eraser, undo, and redo
 - [ ] Save drawings as PNG images
-- [ ] Download or export drawings
+- [ ] Export and download drawings
 - [ ] Improved gesture tracking and stroke smoothing
-- [ ] Better mobile and tablet support
-- [ ] Accessible controls and keyboard alternatives
+- [ ] Better tablet and mobile support
+- [ ] Keyboard alternatives and accessibility improvements
 - [ ] Automated tests and performance profiling
-- [ ] Screenshots and a demonstration GIF in the README
+- [ ] Demo GIF and screenshots
 
 ## 🤝 Contributing
 
 Contributions and suggestions are welcome.
 
-1. Fork this repository.
+1. Fork the repository.
 2. Create a feature branch.
-3. Implement and test your changes.
+3. Make and test your changes.
 4. Commit and push your changes.
-5. Open a pull request describing the improvement.
+5. Open a pull request explaining the improvement.
 
 ## 👨‍💻 Author
 
-**Arjun Sharma**
+<div align="center">
 
-- GitHub: [https://github.com/ArjunSharma-55](https://github.com/ArjunSharma-55)
-- Project: [https://github.com/ArjunSharma-55/Air-WhiteBoard](https://github.com/ArjunSharma-55/Air-WhiteBoard)
-- Live Demo: [https://air-whiteboard.vercel.app/](https://air-whiteboard.vercel.app/)
+### Arjun Sharma
+
+
+Interested in web development, interactive applications, and building practical projects.
+
+[![GitHub](https://img.shields.io/badge/GitHub-ArjunSharma--55-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ArjunSharma-55)
+
+[![Live Demo](https://img.shields.io/badge/🌐_TRY_THE_LIVE_DEMO-00D9FF?style=for-the-badge&labelColor=080B18)](https://arjunsharma-55.github.io/Air-WhiteBoard/)
+
+</div>
 
 ## 📄 License
 
-No license has been specified here. Before reusing or redistributing this project, add an appropriate `LICENSE` file and update this section to match it.
+Check the repository for a `LICENSE` file to determine the applicable usage and distribution terms. If no license is present, do not assume that others have permission to reuse or redistribute the code.
 
 ---
 
-⭐ If you find this project interesting, consider starring the repository and sharing your feedback.
+<div align="center">
 
-**Built as a hands-on exploration of interactive web development and gesture-based interfaces.**
+### ✋ DRAW WITHOUT TOUCH.
+### 🎨 CREATE WITH MOVEMENT.
+### ⚡ EXPLORE NEW POSSIBILITIES.
+
+**Air-WhiteBoard — Gesture-Based Virtual Whiteboard**
+
+[🚀 **OPEN LIVE DEMO**](https://arjunsharma-55.github.io/Air-WhiteBoard/)
+
+[⭐ **VIEW SOURCE CODE**](https://github.com/ArjunSharma-55/Air-WhiteBoard)
+
+<sub>Built by Arjun Sharma.</sub>
+
+</div>
