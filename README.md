@@ -81,7 +81,7 @@ If the application requests camera permission, allow access only if you want to 
 
 Explore touch-free drawing using supported hand movements.
 
-</td>
+</td> 
 <td width="50%" valign="top">
 
 ### 🎨 Digital Canvas
@@ -240,7 +240,6 @@ Contributions and suggestions are welcome.
 <div align="center">
 
 ### Arjun Sharma
-
 
 Interested in web development, interactive applications, and building practical projects.
 
