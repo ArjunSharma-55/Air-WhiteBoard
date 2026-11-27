@@ -1,445 +1,53 @@
-const video = document.getElementById("video");
-const canvas = document.getElementById("drawCanvas");
-const ctx = canvas.getContext("2d");
-
-const cursor = document.getElementById("cursor");
-
-const statusText = document.getElementById("statusText");
-const statusDot = document.getElementById("statusDot");
-
-const clearBtn = document.getElementById("clearBtn");
-const undoBtn = document.getElementById("undoBtn");
-const fullscreenBtn = document.getElementById("fullscreenBtn");
-
-const penSize = document.getElementById("penSize");
-const sizeValue = document.getElementById("sizeValue");
-
-let currentColor = "#00ffcc";
-let currentSize = 6;
-
-let drawing = false;
-
-let lastX = null;
-let lastY = null;
-
-let history = [];
-
-
-/* =========================
-   CANVAS SIZE
-========================= */
-
-function resizeCanvas() {
-
-    const rect = canvas.getBoundingClientRect();
-
-    const oldCanvas = document.createElement("canvas");
-
-    oldCanvas.width = canvas.width;
-    oldCanvas.height = canvas.height;
-
-    const oldCtx = oldCanvas.getContext("2d");
-
-    if (canvas.width > 0 && canvas.height > 0) {
-        oldCtx.drawImage(canvas, 0, 0);
-    }
-
-    canvas.width = rect.width;
-    canvas.height = rect.height;
-
-    if (oldCanvas.width > 0 && oldCanvas.height > 0) {
-        ctx.drawImage(
-            oldCanvas,
-            0,
-            0,
-            oldCanvas.width,
-            oldCanvas.height,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-    }
+(()=>{"use strict";
+const $=id=>document.getElementById(id),canvas=$("drawCanvas"),ctx=canvas.getContext("2d"),preview=$("previewCanvas"),pctx=preview.getContext("2d"),wrap=$("canvasWrap"),video=$("video"),mini=$("miniVideo"),cursor=$("handCursor"),KEY="airboard-extreme-v2";
+const S={tool:"pen",color:"#00d9ff",size:6,opacity:1,smoothing:.65,pages:[{strokes:[]}],page:0,undo:[],redo:[],active:null,last:null,stream:null,hands:null,cameraOn:false,frames:0,fps:0,session:Date.now(),dirty:false};
+const page=()=>S.pages[S.page],strokes=()=>page().strokes,copy=x=>JSON.parse(JSON.stringify(x));
+function toast(msg,error=false){const n=document.createElement("div");n.className="toast"+(error?" error":"");n.textContent=msg;$("toastRegion").append(n);setTimeout(()=>n.remove(),2800)}
+function dirty(){S.dirty=true;$("saveStatus").textContent="Saving…";clearTimeout(S.saveTimer);S.saveTimer=setTimeout(save,600)}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({version:2,name:$("boardName").value,pages:S.pages,page:S.page}));S.dirty=false;$("saveStatus").textContent="Saved locally"}catch(e){toast("Local storage is full. Export your board.",true)}}
+function resize(){const r=wrap.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);if(!r.width||!r.height)return;[canvas,preview].forEach(c=>{c.width=r.width*d;c.height=r.height*d;c.style.width=r.width+"px";c.style.height=r.height+"px"});ctx.setTransform(d,0,0,d,0,0);pctx.setTransform(d,0,0,d,0,0);redraw()}
+function snapshot(){S.undo.push(copy(strokes()));if(S.undo.length>50)S.undo.shift();S.redo=[];historyButtons()}
+function historyButtons(){$("undoBtn").disabled=!S.undo.length;$("redoBtn").disabled=!S.redo.length;$("undoBtn").style.opacity=S.undo.length?1:.35;$("redoBtn").style.opacity=S.redo.length?1:.35}
+function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+function smooth(p){if(!S.last)return p;const t=1-S.smoothing;return{x:S.last.x+(p.x-S.last.x)*t,y:S.last.y+(p.y-S.last.y)*t}}
+function drawStroke(c,s){if(!s.points?.length)return;c.save();c.globalAlpha=s.opacity??1;c.lineCap="round";c.lineJoin="round";c.lineWidth=s.tool==="highlighter"?s.size*2.8:s.size;c.strokeStyle=s.tool==="eraser"?"#000":s.color;if(s.tool==="highlighter")c.globalAlpha*=.25;if(s.tool==="eraser"){c.globalCompositeOperation="destination-out";c.globalAlpha=1}const a=s.start||s.points[0],b=s.end||s.points[s.points.length-1];c.beginPath();if(s.tool==="line"){c.moveTo(a.x,a.y);c.lineTo(b.x,b.y)}else if(s.tool==="rect"){c.rect(a.x,a.y,b.x-a.x,b.y-a.y)}else if(s.tool==="ellipse"){c.ellipse((a.x+b.x)/2,(a.y+b.y)/2,Math.max(.5,Math.abs(b.x-a.x)/2),Math.max(.5,Math.abs(b.y-a.y)/2),0,0,Math.PI*2)}else{c.moveTo(s.points[0].x,s.points[0].y);for(let i=1;i<s.points.length;i++){const p=s.points[i-1],q=s.points[i];c.quadraticCurveTo(p.x,p.y,(p.x+q.x)/2,(p.y+q.y)/2)}if(s.points.length===1)c.lineTo(a.x+.1,a.y+.1)}c.stroke();c.restore()}
+function redraw(){const r=wrap.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);pctx.clearRect(0,0,r.width,r.height);strokes().forEach(s=>drawStroke(ctx,s));stats()}
+function startStroke(p){snapshot();S.active={tool:S.tool,color:S.color,size:S.size,opacity:S.opacity,points:[p],start:p,end:p};strokes().push(S.active);S.last=p;dirty()}
+function addPoint(raw){const p=smooth(raw);if(!S.active){startStroke(p);return}if(dist(p,S.last)<1.1)return;S.active.points.push(p);S.active.end=p;S.last=p;pctx.clearRect(0,0,wrap.clientWidth,wrap.clientHeight);drawStroke(pctx,S.active);dirty()}
+function finish(){if(S.active){S.active=null;S.last=null;redraw()}}
+function undo(){if(!S.undo.length)return;S.redo.push(copy(strokes()));page().strokes=S.undo.pop();redraw();dirty();historyButtons()}
+function redo(){if(!S.redo.length)return;S.undo.push(copy(strokes()));page().strokes=S.redo.pop();redraw();dirty();historyButtons()}
+function clear(){if(!strokes().length)return;snapshot();page().strokes=[];redraw();dirty();toast("Page cleared")}
+function stats(){const count=S.pages.reduce((n,p)=>n+p.strokes.length,0);$("strokeCount").textContent=count+" strokes";$("statStrokes").textContent=count;$("statPages").textContent=S.pages.length;$("pageLabel").textContent="PAGE "+(S.page+1)+" / "+S.pages.length;historyButtons()}
+function setTool(t){S.tool=t;document.querySelectorAll("[data-tool]").forEach(b=>b.classList.toggle("active",b.dataset.tool===t));$("toolSelect").value=t;$("modeValue").textContent=t.toUpperCase()+" MODE";finish()}
+function setColor(c){S.color=c;$("colorInput").value=c;document.querySelectorAll(".swatch").forEach(b=>b.classList.toggle("selected",b.dataset.color===c))}
+function point(e){const r=canvas.getBoundingClientRect();return{x:Math.max(0,Math.min(r.width,e.clientX-r.left)),y:Math.max(0,Math.min(r.height,e.clientY-r.top))}}
+let pointerStart=null;
+canvas.addEventListener("pointerdown",e=>{if(e.button!==0)return;e.preventDefault();canvas.setPointerCapture(e.pointerId);pointerStart=point(e);if(["line","rect","ellipse"].includes(S.tool)){snapshot();S.active={tool:S.tool,color:S.color,size:S.size,opacity:S.opacity,points:[pointerStart],start:pointerStart,end:pointerStart};strokes().push(S.active)}else startStroke(pointerStart)});
+canvas.addEventListener("pointermove",e=>{if(!S.active||!pointerStart)return;const p=point(e);if(["line","rect","ellipse"].includes(S.tool)){S.active.end=p;S.active.points=[pointerStart,p];redraw()}else addPoint(p)});
+function pointerEnd(){if(!S.active)return;finish();pointerStart=null;dirty()}
+canvas.addEventListener("pointerup",pointerEnd);canvas.addEventListener("pointercancel",pointerEnd);canvas.addEventListener("lostpointercapture",pointerEnd);
+function eraseAt(p){const i=strokes().findIndex(s=>(s.points||[]).some(q=>dist(p,q)<Math.max(14,s.size+9)));if(i>=0){snapshot();strokes().splice(i,1);redraw();dirty()}}
+function fingerUp(lm,tip,pip){return lm[tip].y<lm[pip].y}
+function handResults(r){const hands=r.multiHandLandmarks||[];if(!hands.length){cursor.style.display="none";$("handDot").classList.remove("active");$("handStatus").textContent="NO HAND";$("trackingState").textContent="Show your hand";finish();S.handMode="PAUSE";return}
+const lm=hands[0],idx=fingerUp(lm,8,6),mid=fingerUp(lm,12,10),ring=fingerUp(lm,16,14),pinky=fingerUp(lm,20,18),pinch=dist({x:lm[4].x,y:lm[4].y},{x:lm[8].x,y:lm[8].y})<.055,rect=wrap.getBoundingClientRect(),raw={x:(1-lm[8].x)*rect.width,y:lm[8].y*rect.height},p=smooth(raw);S.handPoint=p;cursor.style.display="block";cursor.style.left=p.x+"px";cursor.style.top=p.y+"px";$("handDot").classList.add("active");$("handStatus").textContent="HAND TRACKED";$("trackingState").textContent="Tracking stable";
+let mode="PAUSE";if(idx&&mid&&!ring&&!pinky)mode="ERASE";else if(idx&&!mid)mode=pinch?"HOVER":"DRAW";S.handMode=mode;
+if(mode==="DRAW"){cursor.classList.add("drawing");if(["line","rect","ellipse"].includes(S.tool)){if(!S.active){snapshot();S.active={tool:S.tool,color:S.color,size:S.size,opacity:S.opacity,points:[p],start:p,end:p};strokes().push(S.active)}else{S.active.end=p;S.active.points=[S.active.start,p];redraw()}}else addPoint(p)}
+else{cursor.classList.remove("drawing");finish();if(mode==="ERASE"&&(!S.eraseLast||dist(p,S.eraseLast)>9)){S.eraseLast=p;eraseAt(p)}else if(mode!=="ERASE")S.eraseLast=null}
+$("modeValue").textContent=mode==="ERASE"?"GESTURE ERASER":S.tool.toUpperCase()+" · "+mode;
 }
-
-window.addEventListener("resize", resizeCanvas);
-
-
-/* =========================
-   COLOR
-========================= */
-
-document.querySelectorAll(".color").forEach(button => {
-
-    button.addEventListener("click", () => {
-
-        document.querySelectorAll(".color")
-            .forEach(b => b.classList.remove("active"));
-
-        button.classList.add("active");
-
-        currentColor = button.dataset.color;
-    });
-
-});
-
-
-/* =========================
-   PEN SIZE
-========================= */
-
-penSize.addEventListener("input", () => {
-
-    currentSize = Number(penSize.value);
-
-    sizeValue.textContent = currentSize;
-
-});
-
-
-/* =========================
-   DRAW
-========================= */
-
-function draw(x, y) {
-
-    if (lastX === null || lastY === null) {
-
-        lastX = x;
-        lastY = y;
-
-        return;
-    }
-
-    ctx.beginPath();
-
-    ctx.moveTo(lastX, lastY);
-
-    ctx.lineTo(x, y);
-
-    ctx.strokeStyle = currentColor;
-
-    ctx.lineWidth = currentSize;
-
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    ctx.shadowBlur = 8;
-    ctx.shadowColor = currentColor;
-
-    ctx.stroke();
-
-    ctx.shadowBlur = 0;
-
-    lastX = x;
-    lastY = y;
-}
-
-
-/* =========================
-   CLEAR
-========================= */
-
-clearBtn.addEventListener("click", () => {
-
-    history.push(
-        ctx.getImageData(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        )
-    );
-
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-    lastX = null;
-    lastY = null;
-
-});
-
-
-/* =========================
-   UNDO
-========================= */
-
-undoBtn.addEventListener("click", () => {
-
-    if (history.length === 0) return;
-
-    const previous = history.pop();
-
-    ctx.putImageData(previous, 0, 0);
-
-});
-
-
-/* =========================
-   FULLSCREEN
-========================= */
-
-fullscreenBtn.addEventListener("click", () => {
-
-    const container =
-        document.querySelector(".camera-container");
-
-    if (!document.fullscreenElement) {
-
-        container.requestFullscreen();
-
-    } else {
-
-        document.exitFullscreen();
-
-    }
-
-});
-
-
-/* =========================
-   MEDIAPIPE HANDS
-========================= */
-
-const hands = new Hands({
-    locateFile: (file) => {
-
-        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-
-    }
-});
-
-
-hands.setOptions({
-
-    maxNumHands: 1,
-
-    modelComplexity: 1,
-
-    minDetectionConfidence: 0.6,
-
-    minTrackingConfidence: 0.6
-
-});
-
-
-/* =========================
-   HAND RESULTS
-========================= */
-
-hands.onResults(results => {
-
-    if (!results.multiHandLandmarks ||
-        results.multiHandLandmarks.length === 0) {
-
-        cursor.style.display = "none";
-
-        drawing = false;
-
-        lastX = null;
-        lastY = null;
-
-        statusText.textContent = "Show your hand";
-
-        statusDot.style.background = "orange";
-
-        return;
-    }
-
-
-    statusText.textContent = "Hand Detected";
-
-    statusDot.style.background = "#00ff88";
-
-
-    const landmarks =
-        results.multiHandLandmarks[0];
-
-
-    /*
-        INDEX FINGER TIP
-        Landmark 8
-    */
-
-    const indexTip = landmarks[8];
-
-    /*
-        INDEX FINGER PIP
-        Landmark 6
-    */
-
-    const indexPip = landmarks[6];
-
-
-    /*
-        MIDDLE FINGER TIP
-        Landmark 12
-    */
-
-    const middleTip = landmarks[12];
-
-    /*
-        MIDDLE FINGER PIP
-        Landmark 10
-    */
-
-    const middlePip = landmarks[10];
-
-
-    /*
-        Check if index finger is up
-    */
-
-    const indexUp =
-        indexTip.y < indexPip.y;
-
-
-    /*
-        Check if middle finger is up
-    */
-
-    const middleUp =
-        middleTip.y < middlePip.y;
-
-
-    /*
-        INDEX FINGER IS THE PEN
-
-        Index up + middle down
-        = drawing
-    */
-
-    if (indexUp && !middleUp) {
-
-        drawing = true;
-
-    } else {
-
-        drawing = false;
-
-        lastX = null;
-        lastY = null;
-
-    }
-
-
-    /*
-        Convert MediaPipe coordinates
-        into screen coordinates.
-
-        X is mirrored because
-        camera is mirrored.
-    */
-
-    const container =
-        document.querySelector(".camera-container");
-
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-
-    const x =
-        (1 - indexTip.x) * width;
-
-    const y =
-        indexTip.y * height;
-
-
-    /*
-        Move cursor
-    */
-
-    cursor.style.display = "block";
-
-    cursor.style.left = `${x}px`;
-    cursor.style.top = `${y}px`;
-
-
-    /*
-        Change cursor appearance
-    */
-
-    if (drawing) {
-
-        cursor.style.background = currentColor;
-
-        cursor.style.boxShadow =
-            `0 0 10px ${currentColor},
-             0 0 25px ${currentColor}`;
-
-        draw(x, y);
-
-    } else {
-
-        cursor.style.background = "#ffffff";
-
-        cursor.style.boxShadow =
-            "0 0 10px white";
-
-    }
-
-});
-
-
-/* =========================
-   CAMERA
-========================= */
-
-const camera = new Camera(video, {
-
-    onFrame: async () => {
-
-        await hands.send({
-            image: video
-        });
-
-    },
-
-    width: 1280,
-
-    height: 720
-
-});
-
-
-/* =========================
-   START
-========================= */
-
-async function startCamera() {
-
-    try {
-
-        await camera.start();
-
-        statusText.textContent =
-            "Camera Active";
-
-        statusDot.style.background =
-            "#00ff88";
-
-        resizeCanvas();
-
-    } catch (error) {
-
-        console.error(error);
-
-        statusText.textContent =
-            "Camera Permission Required";
-
-        statusDot.style.background =
-            "red";
-
-        alert(
-            "Camera access allow karo aur page ko dobara reload karo."
-        );
-
-    }
-
-}
-
-
-startCamera();
+async function startCamera(){if(S.cameraOn)return;if(!navigator.mediaDevices?.getUserMedia){toast("Camera requires HTTPS or localhost.",true);return}try{$("appStatus").textContent="Requesting camera…";S.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:{ideal:1280},height:{ideal:720}},audio:false});video.srcObject=S.stream;mini.srcObject=S.stream;await Promise.all([video.play(),mini.play()]);if(typeof Hands==="undefined")throw Error("MediaPipe could not load. Check internet and reload.");S.hands=new Hands({locateFile:f=>"https://cdn.jsdelivr.net/npm/@mediapipe/hands/"+f});S.hands.setOptions({maxNumHands:1,modelComplexity:1,minDetectionConfidence:.65,minTrackingConfidence:.6});S.hands.onResults(handResults);S.cameraOn=true;let busy=false;S.frameTimer=setInterval(async()=>{if(!S.cameraOn||busy||video.readyState<2)return;busy=true;try{await S.hands.send({image:video});S.frames++}catch(e){console.warn(e)}finally{busy=false}},34);video.style.display="block";mini.style.display="block";$("cameraPlaceholder").style.display="none";$("miniCameraOff").style.display="none";$("cameraState").textContent="Camera active";$("trackingState").textContent="Waiting for hand";$("cameraToggleBtn").textContent="◉ Camera on";$("cameraSwitchBtn").textContent="ON";$("cameraSwitchBtn").classList.add("on");$("appStatus").textContent="Camera connected";toast("Camera connected. Show your hand.")}catch(e){console.error(e);if(S.stream)S.stream.getTracks().forEach(t=>t.stop());S.stream=null;$("appStatus").textContent="Camera unavailable";$("cameraState").textContent="Camera unavailable";$("trackingState").textContent=e.message;toast(e.message,true)}}
+async function stopCamera(){S.cameraOn=false;clearInterval(S.frameTimer);if(S.stream)S.stream.getTracks().forEach(t=>t.stop());S.stream=null;video.srcObject=null;mini.srcObject=null;video.style.display="none";mini.style.display="none";$("cameraPlaceholder").style.display="flex";$("miniCameraOff").style.display="grid";if(S.hands){try{await S.hands.close()}catch(e){}S.hands=null}$("cameraState").textContent="Camera inactive";$("trackingState").textContent="Camera stopped";$("cameraToggleBtn").textContent="◉ Camera on";$("cameraSwitchBtn").textContent="OFF";$("cameraSwitchBtn").classList.remove("on");$("handDot").classList.remove("active");$("handStatus").textContent="NO HAND";cursor.style.display="none";finish();$("appStatus").textContent="Workspace ready"}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.version===2&&Array.isArray(d.pages)&&d.pages.length){S.pages=d.pages;S.page=Math.min(d.page||0,d.pages.length-1);$("boardName").value=d.name||"Untitled board"}}catch(e){console.warn(e)}}
+function pageChange(n){if(n<0||n>=S.pages.length)return;finish();S.page=n;S.undo=[];S.redo=[];redraw();dirty()}
+function addPage(){S.pages.push({strokes:[]});pageChange(S.pages.length-1);toast("New page added")}
+function exportPng(){const r=wrap.getBoundingClientRect(),out=document.createElement("canvas");out.width=r.width*2;out.height=r.height*2;const c=out.getContext("2d");c.scale(2,2);c.fillStyle="#fff";c.fillRect(0,0,r.width,r.height);strokes().forEach(s=>drawStroke(c,s));const a=document.createElement("a");a.download=($("boardName").value||"airboard").replace(/[^a-z0-9-_]/gi,"-")+"-page-"+(S.page+1)+".png";a.href=out.toDataURL("image/png");a.click();toast("PNG exported")}
+function exportSvg(){const r=wrap.getBoundingClientRect();let paths="";strokes().forEach(s=>{if(!s.points?.length)return;let d="M "+s.points[0].x+" "+s.points[0].y;s.points.slice(1).forEach(p=>d+=" L "+p.x+" "+p.y);paths+='<path d="'+d+'" fill="none" stroke="'+(s.tool==="eraser"?"#fff":s.color)+'" stroke-width="'+s.size+'" stroke-linecap="round" opacity="'+(s.opacity??1)+'"/>'});const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+r.width+'" height="'+r.height+'"><rect width="100%" height="100%" fill="white"/>'+paths+'</svg>';const u=URL.createObjectURL(new Blob([svg],{type:"image/svg+xml"})),a=document.createElement("a");a.href=u;a.download="airboard-page-"+(S.page+1)+".svg";a.click();URL.revokeObjectURL(u);toast("SVG exported")}
+document.querySelectorAll("[data-tool]").forEach(b=>b.addEventListener("click",()=>setTool(b.dataset.tool)));document.querySelectorAll(".swatch").forEach(b=>b.addEventListener("click",()=>setColor(b.dataset.color)));
+$("colorInput").addEventListener("input",e=>setColor(e.target.value));$("brushSize").addEventListener("input",e=>{S.size=+e.target.value;$("brushValue").textContent=S.size});$("opacityRange").addEventListener("input",e=>{S.opacity=+e.target.value/100;$("opacityValue").textContent=e.target.value+"%"});$("smoothRange").addEventListener("input",e=>{S.smoothing=+e.target.value/100;$("smoothValue").textContent=e.target.value+"%"});$("toolSelect").addEventListener("change",e=>setTool(e.target.value));
+$("undoBtn").onclick=undo;$("redoBtn").onclick=redo;$("clearBtn").onclick=clear;$("gridBtn").onclick=()=>{const on=$("gridBtn").getAttribute("aria-pressed")!=="true";$("gridBtn").setAttribute("aria-pressed",String(on));$("canvasGrid").classList.toggle("visible",on)};$("cameraToggleBtn").onclick=()=>S.cameraOn?stopCamera():startCamera();$("cameraSwitchBtn").onclick=()=>S.cameraOn?stopCamera():startCamera();$("startCameraBtn").onclick=startCamera;
+$("exportBtn").onclick=exportPng;$("exportTopBtn").onclick=()=>{if(confirm("Export PNG? Press Cancel to export SVG."))exportPng();else exportSvg()};$("saveBtn").onclick=()=>{save();toast("Board saved in this browser")};$("addPageBtn").onclick=addPage;$("prevPageBtn").onclick=()=>pageChange(S.page-1);$("nextPageBtn").onclick=()=>pageChange(S.page+1);$("boardName").oninput=dirty;$("fullscreenBtn").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();$("helpBtn").onclick=()=>$("helpDialog").showModal();
+document.addEventListener("keydown",e=>{if(e.target.matches("input,select,textarea"))return;const k=e.key.toLowerCase();if((e.ctrlKey||e.metaKey)&&k==="z"){e.preventDefault();e.shiftKey?redo():undo()}else if((e.ctrlKey||e.metaKey)&&k==="y"){e.preventDefault();redo()}else if(["p","h","e","l","r","o"].includes(k))setTool(({p:"pen",h:"highlighter",e:"eraser",l:"line",r:"rect",o:"ellipse"})[k])});
+window.addEventListener("resize",resize);window.addEventListener("beforeunload",()=>{if(S.dirty)save();if(S.stream)S.stream.getTracks().forEach(t=>t.stop())});
+load();resize();redraw();setInterval(()=>{const sec=Math.floor((Date.now()-S.session)/1000);$("statTime").textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");const fps=Math.round(S.frames);$("fpsValue").textContent=fps+" FPS";$("statFPS").textContent=fps||"--";S.frames=0},1000);historyButtons();
+})();
